@@ -20,16 +20,12 @@ if __name__ == "__main__":
     overlay = os.path.join('data', 'overlay.json')
 
     # Static Array, pending data of routes
-    array = [[103.899582, 1.405146],[103.904666, 1.414444],[103.907902, 1.402316],[103.918416, 1.403702],[103.913274, 1.394577]]   
+    array = [[103.899582, 1.405146],[103.904666, 1.414444],[103.907902, 1.402316],[103.918416, 1.403702],[103.913274, 1.394577]]
 
     # Loop to repackage from [lat, long] to [long, lat]
-    for i in range(0, len(array)):    
-        markerCoordinates = []
-        markerCoordinates.append(array[i][1])   
-        markerCoordinates.append(array[i][0])
-
-        # Set coordinates location, popup informations, tooltip color etc
-        folium.Marker(markerCoordinates,
+    for i in range(0, len(array)):  
+        # Set coordinates location, popup information, tooltip color etc
+        folium.Marker([array[i][1],array[i][0]],
                 popup= i,
                 tooltip=tooltip).add_to(m)
 
@@ -42,5 +38,4 @@ if __name__ == "__main__":
     w.setHtml(data.getvalue().decode())
     w.resize(840, 680)
     w.show()
-
     sys.exit(app.exec_())
