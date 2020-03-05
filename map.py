@@ -5,6 +5,14 @@ import io
 import sys
 from PyQt5 import QtWidgets, QtWebEngineWidgets
 
+def setCoordinates(array):
+    f = open("overlay.json", "w") 
+    listToStr = ', '.join([str(elem) for elem in array]) #join elements of array with comma
+    f.write("{\"type\": \"FeatureCollection\", \"features\": [ { \"type\": \"Feature\", \"properties\": {}, \"geometry\": { \"type\": \"LineString\", \"coordinates\": [")
+    f.write(listToStr)
+    f.write("]}}]}")
+    f.close()
+
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
 
@@ -16,11 +24,14 @@ if __name__ == "__main__":
     # Global tooltip, hover info
     tooltip = 'Click For More Info'
 
-    # Location Data from json
-    overlay = os.path.join('data', 'overlay.json')
-
+    # Add coordinates to json file
     # Static Array, pending data of routes
     array = [[103.899582, 1.405146],[103.904666, 1.414444],[103.907902, 1.402316],[103.918416, 1.403702],[103.913274, 1.394577]]
+    # Call function and append new route data
+    setCoordinates(array)
+
+    # Location Data from json
+    overlay = os.path.join('data', 'overlay.json')
 
     # Loop to repackage from [lat, long] to [long, lat]
     for i in range(0, len(array)):  
