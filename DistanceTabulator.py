@@ -16,14 +16,18 @@ distance_table = pd.read_csv("Punggol Coordinates.csv", header=None)
 for i in range(1, 1191):  # 1191
     # FOR EVERY COLUMN... (Skips first 4 already-populated columns)
     nearbyNodes = []
-    for j in range(6, 1196):
+    nearbyDistances = []
+    for j in range(7, 1197):
         # Assign distance between nodes in meters
         distance = 1000 * round(geodesic((distance_table.iloc[i, 2], distance_table.iloc[i, 3]),
-                                         (distance_table.iloc[j-5, 2], distance_table.iloc[j-5, 3])).km, 3)
+                                         (distance_table.iloc[j-6, 2], distance_table.iloc[j-6, 3])).km, 3)
         distance_table.iloc[i, j] = distance
         if 0 < distance < 180:
-            nearbyNodes.append(str(distance_table.iloc[j-5, 0]))
+            nearbyNodes.append(str(distance_table.iloc[j-6, 0]))
+            nearbyDistances.append(int(distance))
     distance_table.iloc[i, 5] = str(nearbyNodes)
+    distance_table.iloc[i, 6] = str(nearbyDistances)
+
     # Prints progress of population per row
     print(round(i / 1191 * 100, 2))
 
