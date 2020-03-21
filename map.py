@@ -5,7 +5,7 @@ import main_graph as m_graph
 import bus_adj as bus_graph
 import lrt_adj as lrt_graph
 from PyQt5 import QtWidgets, QtWebEngineWidgets
-
+import csv
 
 # ----------------------------------
 # THIS PART CONCERNS WITH UI
@@ -19,20 +19,86 @@ if __name__ == "__main__":
     tooltip = 'Click For More Info'
 
     # ASKS FOR INPUT/OUTPUT HERE, EVERYTHING TAKEN IN AS STRING (Irvyn)
-    start = ""
-    end = ""
-    mode = ""
-    user_input = ""
-    print("Welcome to Punggol Pathfinder")
-    print("Valid inputs are: Postal codes, bus stop numbers, train station names, train station codes.")
-    print("Where are you coming from?")
-    print("INPUT HERE")
-    print("Where is your destination?")
-    print("INPUT HERE")
-    print("Path is " + "START " + "to " + "END" + ". Correct? Y/N")
-    print("INPUT HERE")
-    print("Select mode of transport: LRT (L), Bus (B), Walk (W), or Mixed (M)?")
-    print("INPUT HERE")
+        def lrt(start):
+        with open('csv\Punggol_LRT_Routing.csv', 'rt') as f:
+            reader = csv.reader(f, delimiter=',')
+            for row in reader:
+                if start == row[0] or start == row[1]:
+                    location.append(row[0])
+                    return location
+                else:
+                    with open('csv\Complete_Punggol_Graph.csv') as g:
+                        reader2 = csv.reader(g, delimiter=',')
+                        for row2 in reader2:
+                            if start == row2[0]:
+                                location.append(row2[0])
+                                return location
+                            else:
+                                with open('csv\Punggol_Buildings.csv') as h:
+                                    reader3 = csv.reader(h, delimiter=',')
+                                    for row3 in reader3:
+                                        if start == row3[0] or start == row2[1]:
+                                            location.append(row3[1])
+                                            return location
+
+    def confirmation(msg):
+        while True:
+            answer = input(msg)
+            answer = answer.upper()
+            if answer in ('Y', 'N'):
+                return answer
+            else:
+                print('Not a valid input, please try again')
+
+    def transportation(tp):
+        while True:
+            mode = input(tp)
+            mode = mode.upper()
+            if mode in ('L', 'B', 'W', 'M'):
+                return mode
+            else:
+                print('Not a valid input, please try again')
+
+    print("\nWelcome to Punggol Pathfinder")
+    print(
+        "Valid inputs are: \033[1m Postal codes, buss tops numbers, train station names, train station codes. \033[0m")
+
+    while True:
+        # User start and end code will be stored in here
+        location = []
+        # User choosen mode will stored in here
+        mode = []
+        # Prompt user for start and destination point
+        start = input("\nWhere are you coming from?\n")
+        end = input("Where is your destination?\n")
+
+        # Calls function to check if input is valid by comparing with CSV
+        if lrt(start) == None or lrt(end) == None:
+            print("Location not valid, please try again\n")
+            continue
+        else:
+            print("Start location: ", start, "\nDestination: ", end)
+            answer = confirmation("\nConfirm start location and destination? [Y/N] \n")
+            if answer == 'N':
+                print("Let\'s try again")
+            elif answer == 'Y':
+                mode = transportation("Select mode of transport: LRT (L), Bus (B), Walk (W), or Mixed (M)\n")
+                if mode == 'L':
+                    # Call Lrt algorithm here
+                    print("Lrt")
+                elif mode == 'B':
+                    # Call Bus algorithm here
+                    print("Bus")
+                elif mode == 'W':
+                    # Call Walk algorithm here
+                    print("Walk")
+                elif mode == 'M':
+                    # Call Mixed algorithm here
+                    print("Mixed")
+                break
+
+    print(location)
+    print(mode)
 
     # search if inputs are codes/names
         # if codes, no change
