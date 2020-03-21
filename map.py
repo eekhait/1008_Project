@@ -19,7 +19,7 @@ if __name__ == "__main__":
     tooltip = 'Click For More Info'
 
     # ASKS FOR INPUT/OUTPUT HERE, EVERYTHING TAKEN IN AS STRING (Irvyn)
-        def lrt(start):
+    def lrt(start):
         with open('csv\Punggol_LRT_Routing.csv', 'rt') as f:
             reader = csv.reader(f, delimiter=',')
             for row in reader:
