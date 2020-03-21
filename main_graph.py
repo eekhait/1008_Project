@@ -65,7 +65,7 @@ def get_nearest_lrt(target):
         index = get_node_index(target)
         node = ""
         distance = 3000
-        for i in range(endIndex+7-14, endIndex+7):
+        for i in range(endIndex+7-14, endIndex+7):  # start and end of LRT columns in csv
             if 0 < int(mainGraph.at[index, i]) < distance:
                 node = mainGraph.at[0, i]
         return str(node)

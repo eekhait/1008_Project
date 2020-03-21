@@ -21,6 +21,7 @@ if __name__ == "__main__":
     # ASKS FOR INPUT/OUTPUT HERE, EVERYTHING TAKEN IN AS STRING (Irvyn)
     start = ""
     end = ""
+    mode = ""
     user_input = ""
     print("Welcome to Punggol Pathfinder")
     print("Valid inputs are: Postal codes, bus stop numbers, train station names, train station codes.")
@@ -58,7 +59,11 @@ if __name__ == "__main__":
 
 
     # lastly... (current path is placeholder)
-    result_path = ['PE1', 'PE2', 'PE3', 'PE4', 'PE5', 'PE6', 'PE7', 'PTC', 'PW1', 'PW3', 'PW4', 'PW5', 'PW6', 'PW7']
+    result_path = [30, ['PE1', 'PE2', 'PE3', 'PE4', 'PE5', 'PE6', 'PE7', 'PTC', 'PW1', 'PW3', 'PW4', 'PW5', 'PW6', 'PW7']]
+    caseL = [10, ['65151', 'PE1', 'PE2', 'PE3','820127']]
+    caseB = [15, ['820269', '820270', '820271', '65009', '65221', '820294'], ['0', '0', '0', '3', '3', '0']]
+    caseW = [30, ['65009', '65159', '820288', '65341']]
+
     print("\nYou can reach XXX from XXX via...")
     print("")   # loop through result_path array and print in one line
 
