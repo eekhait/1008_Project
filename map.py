@@ -20,21 +20,21 @@ if __name__ == "__main__":
 
     # ASKS FOR INPUT/OUTPUT HERE, EVERYTHING TAKEN IN AS STRING (Irvyn)
     def lrt(start):
-        with open('csv\Punggol_LRT_Routing.csv', 'rt') as f:
+        with open('csv/Punggol_LRT_Routing.csv', 'rt') as f:
             reader = csv.reader(f, delimiter=',')
             for row in reader:
                 if start == row[0] or start == row[1]:
                     location.append(row[0])
                     return location
                 else:
-                    with open('csv\Complete_Punggol_Graph.csv') as g:
+                    with open('csv/Complete_Punggol_Graph.csv') as g:
                         reader2 = csv.reader(g, delimiter=',')
                         for row2 in reader2:
                             if start == row2[0]:
                                 location.append(row2[0])
                                 return location
                             else:
-                                with open('csv\Punggol_Buildings.csv') as h:
+                                with open('csv/Punggol_Buildings.csv') as h:
                                     reader3 = csv.reader(h, delimiter=',')
                                     for row3 in reader3:
                                         if start == row3[0] or start == row2[1]:
@@ -43,8 +43,7 @@ if __name__ == "__main__":
 
     def confirmation(msg):
         while True:
-            answer = input(msg)
-            answer = answer.upper()
+            answer = input(msg).upper()
             if answer in ('Y', 'N'):
                 return answer
             else:
@@ -52,8 +51,7 @@ if __name__ == "__main__":
 
     def transportation(tp):
         while True:
-            mode = input(tp)
-            mode = mode.upper()
+            mode = input(tp).upper()
             if mode in ('L', 'B', 'W', 'M'):
                 return mode
             else:
@@ -61,7 +59,7 @@ if __name__ == "__main__":
 
     print("\nWelcome to Punggol Pathfinder")
     print(
-        "Valid inputs are: \033[1m Postal codes, buss tops numbers, train station names, train station codes. \033[0m")
+        "Valid inputs are: \033[1m Postal codes, bus stop numbers, train station names, train station codes. \033[0m")
 
     while True:
         # User start and end code will be stored in here
@@ -71,6 +69,8 @@ if __name__ == "__main__":
         # Prompt user for start and destination point
         start = input("\nWhere are you coming from?\n")
         end = input("Where is your destination?\n")
+        #print(start)
+        #print(end)
 
         # Calls function to check if input is valid by comparing with CSV
         if lrt(start) == None or lrt(end) == None:
@@ -100,35 +100,12 @@ if __name__ == "__main__":
     print(location)
     print(mode)
 
-    # search if inputs are codes/names
-        # if codes, no change
-        # if names, convert to code
-    # if L... (Alfred)
-        # call LRT function
-        # store results of node under result_path
-        # closest LRT to START is XXX, closest LRT to END is XXX
-                # algorithm hereee
-                # explain route (start station, station 2, ..., end station)
-                    # maybe prepend/append walk to start and end stations
-    # elif B... (Bryan)
-        # call bus function
-        # store reults of node under result_path
-            #  get closest bus stops and their available buses
-    # elif W... (Russ)
-        # call walk function
-        # store reults of node under result_path
-    # elif M (Russ)
-        # call mixed function
-        # store reults of node under result_path
-    # else: invalid (Irvyn)
-        # ask for input again
-
 
     # lastly... (current path is placeholder)
     result_path = [30, ['PE1', 'PE2', 'PE3', 'PE4', 'PE5', 'PE6', 'PE7', 'PTC', 'PW1', 'PW3', 'PW4', 'PW5', 'PW6', 'PW7']]
     caseL = [10, ['65151', 'PE1', 'PE2', 'PE3','820127']]
     caseB = [15, ['820269', '820270', '820271', '65009', '65221', '820294'], ['0', '0', '0', '3', '3', '0']]
-    caseW = [30, ['65009', '65159', '820288', '65341']]
+    caseW = [654, ['65009', '65219', '820293', '820296', '820199']]
 
     print("\nYou can reach XXX from XXX via...")
     print("")   # loop through result_path array and print in one line
