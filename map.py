@@ -19,14 +19,27 @@ if __name__ == "__main__":
     tooltip = 'Click For More Info'
 
     # ASKS FOR INPUT/OUTPUT HERE, EVERYTHING TAKEN IN AS STRING (Irvyn)
-    def check(start):
-        with open('Complete_Punggol_Graph.csv', 'rt') as f:
+    def lrt(start):
+        with open('csv/Punggol_LRT_Routing.csv', 'rt') as f:
             reader = csv.reader(f, delimiter=',')
             for row in reader:
                 if start == row[0] or start == row[1]:
                     location.append(row[0])
-                    name.append(row[1])
-            return location
+                    return location
+                else:
+                    with open('csv/Complete_Punggol_Graph.csv') as g:
+                        reader2 = csv.reader(g, delimiter=',')
+                        for row2 in reader2:
+                            if start == row2[0]:
+                                location.append(row2[0])
+                                return location
+                            else:
+                                with open('csv/Punggol_Buildings.csv') as h:
+                                    reader3 = csv.reader(h, delimiter=',')
+                                    for row3 in reader3:
+                                        if start == row3[0] or start == row2[1]:
+                                            location.append(row3[1])
+                                            return location
 
     def confirmation(msg):
         while True:
@@ -49,7 +62,6 @@ if __name__ == "__main__":
         "Valid inputs are: \033[1m Postal codes, bus stop numbers, train station names, train station codes. \033[0m")
 
     while True:
-        name = []
         # User start and end code will be stored in here
         location = []
         # User choosen mode will stored in here
@@ -57,24 +69,15 @@ if __name__ == "__main__":
         # Prompt user for start and destination point
         start = input("\nWhere are you coming from?\n")
         end = input("Where is your destination?\n")
+        #print(start)
+        #print(end)
 
         # Calls function to check if input is valid by comparing with CSV
-        if check(start) == None or check(end) == None:
+        if lrt(start) == None or lrt(end) == None:
             print("Location not valid, please try again\n")
             continue
         else:
-            sp = name[0]
-            ep = name[1]
-
-            if sp:
-                print("Start location: ", sp)
-            else:
-                print("Start location: ", start)
-            if ep:
-                print("Destination: ", ep)
-            else:
-                print("Destination: ", end)
-
+            print("Start location: ", start, "\nDestination: ", end)
             answer = confirmation("\nConfirm start location and destination? [Y/N] \n")
             if answer == 'N':
                 print("Let\'s try again")
