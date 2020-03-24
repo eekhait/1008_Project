@@ -54,6 +54,7 @@ if __name__ == "__main__":
         location = []
         # User choosen mode will stored in here
         mode = []
+        result_path = []
         # Prompt user for start and destination point
         start = input("\nWhere are you coming from?\n")
         end = input("Where is your destination?\n")
@@ -88,26 +89,23 @@ if __name__ == "__main__":
                     print("Bus")
                 elif mode == 'W':
                     # Call Walk algorithm here
-                    print("Walk")
+                    result_path = m_graph.take_walk(location[0], location[1])
                 elif mode == 'M':
                     # Call Mixed algorithm here
                     print("Mixed")
                 break
 
-    print(location)
-    print(mode)
-
+    # print(location)
+    # print(mode)
 
     # lastly... (current path is placeholder)
-    result_path = [30, ['PE1', 'PE2', 'PE3', 'PE4', 'PE5', 'PE6', 'PE7', 'PTC', 'PW1', 'PW3', 'PW4', 'PW5', 'PW6', 'PW7']]
     caseL = [10, ['65151', 'PE1', 'PE2', 'PE3','820127']]
     caseB = [15, ['820269', '820270', '820271', '65009', '65221', '820294'], ['0', '0', '0', '3', '3', '0']]
-    caseW = [654, ['65009', '65219', '820293', '820296', '820199']]
 
     print("\nYou can reach XXX from XXX via...")
     print("")   # loop through result_path array and print in one line
 
-    # (khai/tamm)
+    # (khai)
     # THIS PART IS WHERE THE MAP GETS POPULATED WITH NODES AND EDGES
     marker_coords = []
     edge_coords = []
@@ -123,7 +121,7 @@ if __name__ == "__main__":
 
     # CREATE A FUNCTION THAT USES DIFFERENT COLORS FOR DIFFERENT MODES OF TRANSPORT
     # MODIFY THE CODE ABOVE
-    # if only one more of transport, no biggie
+    # if only one mode of transport, no biggie
         # if lrt...
         # elif bus...
         # elif walk...
