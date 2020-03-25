@@ -19,32 +19,18 @@ if __name__ == "__main__":
     tooltip = 'Click For More Info'
 
     # ASKS FOR INPUT/OUTPUT HERE, EVERYTHING TAKEN IN AS STRING (Irvyn)
-    def lrt(start):
-        with open('csv\Punggol_LRT_Routing.csv', 'rt') as f:
+    def check(start):
+        with open('Complete_Punggol_Graph.csv', 'rt') as f:
             reader = csv.reader(f, delimiter=',')
             for row in reader:
                 if start == row[0] or start == row[1]:
                     location.append(row[0])
-                    return location
-                else:
-                    with open('csv\Complete_Punggol_Graph.csv') as g:
-                        reader2 = csv.reader(g, delimiter=',')
-                        for row2 in reader2:
-                            if start == row2[0]:
-                                location.append(row2[0])
-                                return location
-                            else:
-                                with open('csv\Punggol_Buildings.csv') as h:
-                                    reader3 = csv.reader(h, delimiter=',')
-                                    for row3 in reader3:
-                                        if start == row3[0] or start == row2[1]:
-                                            location.append(row3[1])
-                                            return location
+                    name.append(row[1])
+            return location, name
 
     def confirmation(msg):
         while True:
-            answer = input(msg)
-            answer = answer.upper()
+            answer = input(msg).upper()
             if answer in ('Y', 'N'):
                 return answer
             else:
@@ -52,8 +38,7 @@ if __name__ == "__main__":
 
     def transportation(tp):
         while True:
-            mode = input(tp)
-            mode = mode.upper()
+            mode = input(tp).upper()
             if mode in ('L', 'B', 'W', 'M'):
                 return mode
             else:
@@ -61,23 +46,36 @@ if __name__ == "__main__":
 
     print("\nWelcome to Punggol Pathfinder")
     print(
-        "Valid inputs are: \033[1m Postal codes, buss tops numbers, train station names, train station codes. \033[0m")
+        "Valid inputs are: \033[1m Postal codes, bus stop numbers, train station names, train station codes. \033[0m")
 
     while True:
+        name = []
         # User start and end code will be stored in here
         location = []
         # User choosen mode will stored in here
         mode = []
+        result_path = []
         # Prompt user for start and destination point
         start = input("\nWhere are you coming from?\n")
         end = input("Where is your destination?\n")
 
         # Calls function to check if input is valid by comparing with CSV
-        if lrt(start) == None or lrt(end) == None:
+        if check(start) == None or check(end) == None:
             print("Location not valid, please try again\n")
             continue
         else:
-            print("Start location: ", start, "\nDestination: ", end)
+            sp = name[0]
+            ep = name[1]
+
+            if sp:
+                print("Start location: ", sp)
+            else:
+                print("Start location: ", start)
+            if ep:
+                print("Destination: ", ep)
+            else:
+                print("Destination: ", end)
+
             answer = confirmation("\nConfirm start location and destination? [Y/N] \n")
             if answer == 'N':
                 print("Let\'s try again")
@@ -91,49 +89,23 @@ if __name__ == "__main__":
                     print("Bus")
                 elif mode == 'W':
                     # Call Walk algorithm here
-                    print("Walk")
+                    result_path = m_graph.take_walk(location[0], location[1])
                 elif mode == 'M':
                     # Call Mixed algorithm here
                     print("Mixed")
                 break
 
-    print(location)
-    print(mode)
-
-    # search if inputs are codes/names
-        # if codes, no change
-        # if names, convert to code
-    # if L... (Alfred)
-        # call LRT function
-        # store results of node under result_path
-        # closest LRT to START is XXX, closest LRT to END is XXX
-                # algorithm hereee
-                # explain route (start station, station 2, ..., end station)
-                    # maybe prepend/append walk to start and end stations
-    # elif B... (Bryan)
-        # call bus function
-        # store reults of node under result_path
-            #  get closest bus stops and their available buses
-    # elif W... (Russ)
-        # call walk function
-        # store reults of node under result_path
-    # elif M (Russ)
-        # call mixed function
-        # store reults of node under result_path
-    # else: invalid (Irvyn)
-        # ask for input again
-
+    # print(location)
+    # print(mode)
 
     # lastly... (current path is placeholder)
-    result_path = [30, ['PE1', 'PE2', 'PE3', 'PE4', 'PE5', 'PE6', 'PE7', 'PTC', 'PW1', 'PW3', 'PW4', 'PW5', 'PW6', 'PW7']]
     caseL = [10, ['65151', 'PE1', 'PE2', 'PE3','820127']]
     caseB = [15, ['820269', '820270', '820271', '65009', '65221', '820294'], ['0', '0', '0', '3', '3', '0']]
-    caseW = [30, ['65009', '65159', '820288', '65341']]
 
     print("\nYou can reach XXX from XXX via...")
     print("")   # loop through result_path array and print in one line
 
-    # (khai/tamm)
+    # (khai)
     # THIS PART IS WHERE THE MAP GETS POPULATED WITH NODES AND EDGES
     marker_coords = []
     edge_coords = []
@@ -149,7 +121,7 @@ if __name__ == "__main__":
 
     # CREATE A FUNCTION THAT USES DIFFERENT COLORS FOR DIFFERENT MODES OF TRANSPORT
     # MODIFY THE CODE ABOVE
-    # if only one more of transport, no biggie
+    # if only one mode of transport, no biggie
         # if lrt...
         # elif bus...
         # elif walk...

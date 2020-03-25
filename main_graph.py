@@ -66,7 +66,7 @@ def get_nearest_lrt(target):
         node = ""
         distance = 3000
         for i in range(endIndex+7-14, endIndex+7):  # start and end of LRT columns in csv
-            if 0 < int(mainGraph.at[index, i]) < distance:
+            if int(mainGraph.at[index, i]) < distance:
                 node = mainGraph.at[0, i]
                 distance = int(mainGraph.at[index, i])
         return str(node)
@@ -101,6 +101,7 @@ def is_adjacent_lrt(adj_list, start_node, end_node):
                 return 0  # If No, return 0
             break
 
+
 # ----------------------------------
 # THIS PART CONCERNS WITH ALGORITHMS:
 # ----------------------------------
@@ -109,6 +110,7 @@ class AStarStack:
         self.top = -1
         self.data = []
         self.total_distance = 0
+        self.distance_to_end = 0
 
     def show_stack(self):
         print("start")
@@ -116,20 +118,21 @@ class AStarStack:
             print(i)
         print("end")
 
-    def push(self, node):
+    def push(self, node, val):
         self.top += 1
         self.data.append(node)
         if self.top > 0:    # if there is at least two elements...
             self.total_distance += get_distance_to_from(self.data[self.top], self.data[self.top-1])
+        self.distance_to_end = val
 
-    def pop(self):
-        if self.top > -1:
-            node = self.data[self.top]
-            if self.top > 0:
-                self.total_distance -= get_distance_to_from(self.data[self.top], self.data[self.top-1])
-            del self.data[self.top]
-            self.top -= 1
-            return node
+    # def pop(self):
+    #    if self.top > -1:
+    #        node = self.data[self.top]
+    #        if self.top > 0:
+    #           self.total_distance -= get_distance_to_from(self.data[self.top], self.data[self.top-1])
+    #       del self.data[self.top]
+    #        self.top -= 1
+    #        return node
 
     def is_empty(self):
         if self.top < 0:
@@ -147,28 +150,54 @@ class AStarStack:
 
     def copy_from(self, a_stack):
         for x in a_stack.data:
-            self.push(x)
+            self.push(x, a_stack.distance_to_end)
 
 
 class AStarQueue:
     def __init__(self):
         self.top = -1
         self.data = []
-
-    def show_line(self):
-        for i in self.data:
-            print("START")
-            i.show_stack()
-            print("END")
+        self.distances_to_target = []
 
     def enqueue(self, node):
+        temp = node.distance_to_end
+        front = 1
+        back = self.top
+        mid = (front+back)//2
+        if self.top > -1:
+            # print(str(temp) + " " + str(self.distances_to_target[0]))
+            if temp < self.distances_to_target[0]:  # add to the front
+                self.data.insert(0, node)
+                self.distances_to_target.insert(0, temp)
+            elif temp > self.distances_to_target[self.top]:     # add to the back
+                self.data.append(node)
+                self.distances_to_target.append(temp)
+            else:
+                while temp != self.distances_to_target[mid] and front != mid:
+                    if temp < self.distances_to_target[mid]:
+                        back = mid
+                        mid = (front + back) // 2
+                    elif temp > self.distances_to_target[mid]:
+                        front = mid
+                        mid = (front + back) // 2
+                # if temp == self.distances_to_target[mid]
+                self.data.insert(mid, node)
+                self.distances_to_target.insert(mid, temp)
+        elif self.top < 0:
+            self.data.append(node)
+            self.distances_to_target.append(temp)
         self.top += 1
-        self.data.append(node)
+        # print("[", end='')
+        # for i in self.data:
+        #     print(str(i.distance_to_end) + ", ", end='')
+        # print("]")
+        # print(str(self.distances_to_target))
 
     def dequeue(self):
         if self.top > -1:
             temp = self.data[0]
             del self.data[0]
+            del self.distances_to_target[0]
             self.top -= 1
             return temp
 
@@ -194,7 +223,7 @@ def take_walk(start_node, end_node):
         # also initialization of visited nodes
         star_queue = AStarQueue()
         star_stack = AStarStack()
-        star_stack.push(start_node)
+        star_stack.push(start_node, get_distance_to_from(start_node, end_node))
         star_queue.enqueue(star_stack)
         visited_nodes = {}
         counter = 0
@@ -209,7 +238,7 @@ def take_walk(start_node, end_node):
                 # create new stack with each adjacent node
                 temper_stack = AStarStack()
                 temper_stack.copy_from(temp_stack)
-                temper_stack.push(str(i))
+                temper_stack.push(str(i), get_distance_to_from(str(i), end_node))
                 # temper_stack.show_stack()
                 # if node is visited before
                 if i in visited_nodes:
@@ -222,9 +251,6 @@ def take_walk(start_node, end_node):
                     # enqueue the stack
                     star_queue.enqueue(temper_stack)
                     visited_nodes[i] = temper_stack.total_distance
-        return [star_queue.data[0].total_distance, star_queue.data[0].data]
-
-
-# print(take_walk('65009', '820199'))
-
+        # return assumes a walking speed of 5.5km/h. first element is time taken in minutes
+        return [round(star_queue.data[0].total_distance/5000*60), star_queue.data[0].data]
 
