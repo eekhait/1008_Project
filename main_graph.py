@@ -66,8 +66,9 @@ def get_nearest_lrt(target):
         node = ""
         distance = 3000
         for i in range(endIndex+7-14, endIndex+7):  # start and end of LRT columns in csv
-            if 0 < int(mainGraph.at[index, i]) < distance:
+            if int(mainGraph.at[index, i]) < distance:
                 node = mainGraph.at[0, i]
+                distance = int(mainGraph.at[index, i])
         return str(node)
 
 
@@ -99,6 +100,7 @@ def is_adjacent_lrt(adj_list, start_node, end_node):
             else:
                 return 0  # If No, return 0
             break
+
 
 # ----------------------------------
 # THIS PART CONCERNS WITH ALGORITHMS:
