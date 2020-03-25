@@ -2,8 +2,6 @@ import pandas as pd
 import csv
 import math
 
-from PyQt5.QtCore.QJsonValue import Null
-
 import main_graph as m_graph
 
 lrtData = pd.read_csv('Punggol_LRT_Routing.csv', sep=',', header=None)
@@ -48,10 +46,10 @@ def cal_distance(adj_list_val, result):
 
 
 def take_lrt(start_node, end_node):
-    start_node = str(start_node)
-    end_node = str(end_node)
-    walk_start_node = []
-    walk_end_node = []
+    start_node = str(start_node)  # Store the start name
+    end_node = str(end_node)  # Store the end name
+    walk_start_node = []  # Store the array from the TAKE_WALK Function FROM START POINT TO LRT
+    walk_end_node = []  # Store the array from the TAKE_WALK Function FROM LRT TO END POINT
     lrt_name = []  # Store the LRT NAME
     lrt_code = []  # Store the LRT CODE
     adj_list = {}  # Store the Adj list
@@ -76,57 +74,70 @@ def take_lrt(start_node, end_node):
                 adj_list_val[row[0]] = add_value  # Append the linked code into the list
                 adj_list[row[0]] = row[2].split(", ")  # Append the linked code into the list
 
-    if len(start_node) != 3:
-        temp_string_start_node = start_node
-        start_node = m_graph.get_nearest_lrt(start_node)
-        walk_start_node = m_graph.take_walk(temp_string_start_node, start_node)
+    # Check if start node is mrt or blocks
+    if start_node in lrt_name:
+        # Convert the LRT NAME INTO LRT CODE
+        for i in range(len(adj_list)):
+            if lrt_name[i] == start_node:
+                start_node = lrt_code[i]  # Convert start_node Into LRT CODE
+                break
+    else:
+        temp_string_start_node = start_node # Store the postal code
+        start_node = m_graph.get_nearest_lrt(start_node) # To Store the nearest LRT station with the postal code
+        walk_start_node = m_graph.take_walk(temp_string_start_node, start_node) # Store the walking node from Start of Postal Code to LRT
 
-    if len(end_node) != 3:
-        temp_string_end_node = end_node
-        end_node = m_graph.get_nearest_lrt(end_node)
-        walk_end_node = m_graph.take_walk(temp_string_end_node, end_node)
+    if end_node in lrt_name:
+        for i in range(len(adj_list)):
+            if lrt_name[i] == end_node:
+                end_node = lrt_code[i]  # Convert end_noce Into LRT CODE
+                break
+    else:
+        temp_string_end_node = end_node  # Store the postal code
+        end_node = m_graph.get_nearest_lrt(end_node) # To Store the nearest LRT station with the postal code
+        walk_end_node = m_graph.take_walk(end_node, temp_string_end_node) # Store the walking node from LRT To the End of Postal code
 
 
-    print(walk_start_node)
-    print(walk_start_node[0])
-    print(walk_start_node[1])
-    print(start_node)
-    print(end_node)
-
-    # Convert the LRT NAME INTO LRT CODE
-    for i in range(len(adj_list)):
-        if lrt_name[i] == start_node:
-            start_node = lrt_code[i]  # Convert start_node Into LRT CODE
-            break
-
-    for i in range(len(adj_list)):
-        if lrt_name[i] == end_node:
-            end_node = lrt_code[i]  # Convert end_noce Into LRT CODE
-            break
 
     # if start and end are connected
     if m_graph.is_adjacent_lrt(adj_list, start_node, end_node):
         result = [start_node, end_node]
-        distance = cal_distance(adj_list_val, result)
-        timing = round_up((distance / 12.5) / 60)
-
-        if walk_start_node != Null:
-            result = walk_start_node[1] + result
-            timing = walk_start_node[0] + timing
-
-        if walk_end_node != Null:
-            result = result + walk_end_node[1]
-            timing = timing + walk_start_node[1]
 
         # average SG MRT 45km/h == 12.5m/s
         # Calculate the timing Second in minutes,
-        print("OutPut: ", [int(timing), [result]])
-        return [int(timing), [result]]
+        distance = cal_distance(adj_list_val, result)
+        timing = round_up((distance / 12.5) / 60)
+
+        # Check if there any array
+        if len(walk_start_node) != 0:
+            del result[0]   # To delete the first array as is duplicated
+            result = walk_start_node[1] + result # Combine the Walking array with result (LRT)
+            timing = walk_start_node[0] + timing # Combine the Time required
+        if len(walk_end_node) != 0:
+            del result[-1] # To delete the last array as is duplicated
+            result = result + walk_end_node # Combine the result (LRT) with  Walking array
+
+        return [int(timing), result]
     else:
         result = (bfs_route(adj_list, start_node, end_node))
+
+        # average SG MRT 45km/h == 12.5m/s
+        # Calculate the timing Second in minutes,
         distance = cal_distance(adj_list_val, result)
-        # average timing stop at each mrt is 2min
-        mrt_stopping = 2 * int(len(result) - 1)
+        timing = round_up((distance / 12.5) / 60)
+        # average timing stop at each mrt is 30second == 0.5
+        mrt_stopping = 0.5 * int(len(result) - 1)
         # Calculate the timing Second in minutes,
         timing = round_up((distance / 12.5) / 60) + mrt_stopping
-        return [int(timing), [result]]
+        # Add another 5 min flat waiting for the train to arrvial
+        timing = timing + 5
+
+        if len(walk_start_node) != 0:
+            del result[0] # To delete the first array as is duplicated
+            result = walk_start_node[1] + result # Combine the Walking array with result (LRT)
+            timing = walk_start_node[0] + timing # Combine the Time required
+        if len(walk_end_node) != 0:
+            del result[-1]  # To delete the last array as is duplicated
+            result = result + walk_end_node # Combine the result (LRT) with  Walking array
+
+        # print([int(timing), result])
+        return [int(timing), result]
