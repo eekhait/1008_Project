@@ -106,42 +106,83 @@ if __name__ == "__main__":
     print("")   # loop through result_path array and print in one line
 
     # (khai)
-    # THIS PART IS WHERE THE MAP GETS POPULATED WITH NODES AND EDGES
-    marker_coords = []
-    edge_coords = []
-    for i in result_path:
-        # this loop creates a list of coordinates to add markers/nodes with
-        marker_coords.append(m_graph.get_lat_long(i))
-        edge_coords.append(m_graph.get_long_lat(i))
+    # THIS PART IS WHERE THE MAP GETS POPULATED WITH NODES AND EDGES ---------------------------------------------
 
-    # Adding of markers and edges to map
-    for i in range(0, len(marker_coords)):
-        folium.Marker([marker_coords[i][1], marker_coords[i][0]], popup=i, tooltip=result_path[i]).add_to(m)
-    folium.PolyLine(edge_coords, color="red").add_to(m)
+    # Adding of markers and edges for Single Transport Routes
+    def singleTransportPlot(paths, markerColor, lineColor, markerIcon):
+        marker_coords = []
+        edge_coords = []
+        for i in paths:
+            # this loop creates a list of coordinates to add markers/nodes with
+            marker_coords.append(m_graph.get_lat_long(i))
+            edge_coords.append(m_graph.get_long_lat(i))
 
-    # CREATE A FUNCTION THAT USES DIFFERENT COLORS FOR DIFFERENT MODES OF TRANSPORT
-    # MODIFY THE CODE ABOVE
-    # if only one mode of transport, no biggie
-        # if lrt...
-        # elif bus...
-        # elif walk...
-        # elif mixed...
-            # take in edge_coords
-            # split edge_coords to how many times the transport mode changes according to mode array
-            # basically you will get a list of arrays
-            # also hardcode a list of 4 colours to choose from (walk, lrt, bus1, bus2)
-            # prevcolor = "" (blank)
-            # for each sub-array in array:
-                # if lrt/walk...
-                    #folium.PolyLine(sub_array, color="1/2").add_to(m) #rmbr to push the color out
-                # if bus
-                    # bus will alternate between two similar colours
-                    # if color == precolor:
-                        # folium.PolyLine(sub_array, color="4").add_to(m) #rmbr to push the color out
-                    # else:
-                        # folium.PolyLine(sub_array, color="3").add_to(m) #rmbr to push the color out
-                # prevcolor = color used
+        for i in range(0, len(marker_coords)):
+            folium.Marker([marker_coords[i][1], marker_coords[i][0]], icon=folium.Icon(color=markerColor,icon=markerIcon, prefix='fa'), popup=i, tooltip=result_path[i]).add_to(m)
+        folium.PolyLine(edge_coords, color=lineColor).add_to(m)
 
+    # Set icon for different transportation types
+    def iconMaker(length):
+        if length == 3:
+            return "train"
+        elif (length == 5):
+            return "bus"
+        elif length == 6:
+            return "blind"
+
+    # Set color based on transportation type
+    def setColor(length):
+        if length == 3:
+            return "purple"
+        elif (length == 5):
+            return "green"
+        elif length == 6:
+            return "grey"    
+    
+    # Set route based on different transport
+    def routePlotting(MOT, paths):
+        if (MOT == "L"):
+            singleTransportPlot(paths, "darkred", "purple", "train")
+        elif (MOT == "B"):
+            singleTransportPlot(paths, "darkred", "green", "bus")
+        elif (MOT == "W"):
+            singleTransportPlot(paths, "darkred", "grey", "male") 
+        elif (MOT == "M"):
+            marker_coords = []
+            edge_coords = []
+            changes_Indicator = 0
+
+            for i in range(0, len(paths[1])):
+                marker_coords.append(m_graph.get_lat_long(paths[1][i]))
+
+                current_node = paths[1][i]
+                if i+1 < len(paths[1]):
+                    next_node = paths[1][i+1]
+                
+                edge_coords.append(m_graph.get_long_lat(current_node))
+
+                if len(current_node) == len(next_node):
+                    folium.Marker([marker_coords[i][1], marker_coords[i][0]], icon=folium.Icon(color="darkred",icon=iconMaker(len(current_node)), prefix='fa'), popup=i, tooltip=result_path[i]).add_to(m)
+                    edge_coords.append(m_graph.get_long_lat(next_node))
+                    folium.PolyLine(edge_coords, color=setColor(len(current_node))).add_to(m)
+                    edge_coords = []
+                elif len(current_node) != len(next_node):
+                    if changes_Indicator == 1:
+                        folium.Marker([marker_coords[i][1], marker_coords[i][0]], icon=folium.Icon(color="darkred",icon=iconMaker(len(current_node)), prefix='fa'), popup=i, tooltip=result_path[i]).add_to(m)
+                        edge_coords.append(m_graph.get_long_lat(next_node))
+                        folium.PolyLine(edge_coords, color=setColor(len(next_node))).add_to(m)
+                        edge_coords = []
+                        changes_Indicator -= 1
+                    else:
+                        folium.Marker([marker_coords[i][1], marker_coords[i][0]], icon=folium.Icon(color="darkred",icon=iconMaker(len(current_node)), prefix='fa'), popup=i, tooltip=result_path[i]).add_to(m)
+                        edge_coords.append(m_graph.get_long_lat(next_node))
+                        folium.PolyLine(edge_coords, color=setColor(len(current_node))).add_to(m)
+                        edge_coords = []
+                        changes_Indicator +=1
+
+    # Call Set routes and pass in mode of transport and routes
+    # Sample Input: [Coming From: PE1], [Coming From: ]
+    routePlotting(mode, location)
 
     # Initialization of the map
     data = io.BytesIO()             # creates a temporary 'container' for html code
