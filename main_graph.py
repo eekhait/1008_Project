@@ -251,6 +251,6 @@ def take_walk(start_node, end_node):
                     # enqueue the stack
                     star_queue.enqueue(temper_stack)
                     visited_nodes[i] = temper_stack.total_distance
-        # return assumes a walking speed of 5.5km/h. first element is time taken in minutes
+        # return assumes a walking speed of 5km/h. first element is time taken in minutes
         return [round(star_queue.data[0].total_distance/5000*60), star_queue.data[0].data]
 

@@ -52,7 +52,7 @@ if __name__ == "__main__":
         name = []
         # User start and end code will be stored in here
         location = []
-        # User choosen mode will stored in here
+        # User chosen mode will stored in here
         mode = []
         result_path = []
         # Prompt user for start and destination point
@@ -83,7 +83,7 @@ if __name__ == "__main__":
                 mode = transportation("Select mode of transport: LRT (L), Bus (B), Walk (W), or Mixed (M)\n")
                 if mode == 'L':
                     # Call Lrt algorithm here
-                    result_path = lrt_graph.take_lrt(start, end)
+                    result_path = lrt_graph.take_lrt(location[0], location[1])
                 elif mode == 'B':
                     # Call Bus algorithm here
                     print("Bus")
@@ -99,25 +99,23 @@ if __name__ == "__main__":
     # print(mode)
 
     # lastly... (current path is placeholder)
-    caseL = [10, ['65151', 'PE1', 'PE2', 'PE3','820127']]
     caseB = [15, ['820269', '820270', '820271', '65009', '65221', '820294'], ['0', '0', '0', '3', '3', '0']]
 
     print("\nYou can reach XXX from XXX via...")
-    print("")   # loop through result_path array and print in one line
+    print("Path is:" + str(result_path))   # loop through result_path array and print in one line
 
     # (khai)
     # THIS PART IS WHERE THE MAP GETS POPULATED WITH NODES AND EDGES
-    marker_coords = []
-    edge_coords = []
-    for i in result_path:
+    marker_coords = []  # stores lat-longs
+    edge_coords = []    # stores long-lats
+    for i in result_path[1]:
         # this loop creates a list of coordinates to add markers/nodes with
         marker_coords.append(m_graph.get_lat_long(i))
         edge_coords.append(m_graph.get_long_lat(i))
-
     # Adding of markers and edges to map
     for i in range(0, len(marker_coords)):
-        folium.Marker([marker_coords[i][1], marker_coords[i][0]], popup=i, tooltip=result_path[i]).add_to(m)
-    folium.PolyLine(edge_coords, color="red").add_to(m)
+        folium.Marker([marker_coords[i][1], marker_coords[i][0]], popup=i, tooltip=result_path[1][i]).add_to(m)
+    folium.PolyLine(edge_coords, color="green").add_to(m)
 
     # CREATE A FUNCTION THAT USES DIFFERENT COLORS FOR DIFFERENT MODES OF TRANSPORT
     # MODIFY THE CODE ABOVE

@@ -5,10 +5,12 @@ import main_graph as m_graph
 
 lrtData = pd.read_csv('Punggol_LRT_Routing.csv', sep=',', header=None)
 
+
 def round_up(n, decimals=0):
     # this is to round up even is 0.1 above
     multiplier = 10 ** decimals
     return math.ceil(n * multiplier) / multiplier
+
 
 def bfs_route(graph, start, end):
     # maintain a queue of paths
@@ -38,6 +40,7 @@ def cal_distance(adj_list_val, result):
             if result[i + 1] in adj_list_val[result[i]][y]: # e.g. check if PE2 is in  adj_list_val['PE1'][0] or  adj_list_val['PE1'][1] LISTING
                 distance += int(adj_list_val[result[i]][y][result[i + 1]])  # e.g. adj_list_val['PE1'][0][['PE2'] will return the distance weightage
     return distance
+
 
 def take_lrt(start_node, end_node):
     start_node = str(start_node)
@@ -81,15 +84,15 @@ def take_lrt(start_node, end_node):
     if m_graph.is_adjacent_lrt(adj_list, start_node, end_node):
         result = [start_node, end_node]
         distance = cal_distance(adj_list_val, result)
-        #average SG MRT 45km/h == 12.5m/s
-        #Calculate the timing Second in minutes,
+        # average SG MRT 45km/h == 12.5m/s
+        # Calculate the timing Second in minutes,
         timing = round_up((distance / 12.5) / 60)
-        return [int(timing), [result]]
+        return [int(timing), result]
     else:
         result = (bfs_route(adj_list, start_node, end_node))
         distance = cal_distance(adj_list_val, result)
-        #average timing stop at each mrt is 2min
+        # average timing stop at each mrt is 2min
         mrt_stopping = 2 * int(len(result)-1)
-        #Calculate the timing Second in minutes,
+        # Calculate the timing Second in minutes,
         timing = round_up((distance / 12.5) / 60) + mrt_stopping
-        return [int(timing), [result]]
+        return [int(timing), result]
