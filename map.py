@@ -86,7 +86,7 @@ if __name__ == "__main__":
                     result_path = lrt_graph.take_lrt(start, end)
                 elif mode == 'B':
                     # Call Bus algorithm here
-                    print("Bus")
+                    result_path = bus_graph.route_finder(start,end)
                 elif mode == 'W':
                     # Call Walk algorithm here
                     result_path = m_graph.take_walk(location[0], location[1])
@@ -100,7 +100,7 @@ if __name__ == "__main__":
 
     # lastly... (current path is placeholder)
     caseL = [10, ['65151', 'PE1', 'PE2', 'PE3','820127']]
-    caseB = [15, ['820269', '820270', '820271', '65009', '65221', '820294'], ['0', '0', '0', '3', '3', '0']]
+    caseB = [15, ['820269', '820270', '820271', '65009', '65221', '820294'], ['0','0','0','43','43','43']]
 
     print("\nYou can reach XXX from XXX via...")
     print("")   # loop through result_path array and print in one line
