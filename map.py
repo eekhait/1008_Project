@@ -142,9 +142,53 @@ if __name__ == "__main__":
     # Set route based on different transport
     def routePlotting(MOT, paths):
         if (MOT == "L"):
-            singleTransportPlot(paths, "darkred", "purple", "train")
+            marker_coords = []
+            edge_coords = []
+            changes_Indicator = 0
+
+            for i in range(0, len(paths[1])):
+                marker_coords.append(m_graph.get_lat_long(paths[1][i]))
+
+                current_node = paths[1][i]
+                if i+1 < len(paths[1]):
+                    next_node = paths[1][i+1]
+                
+                edge_coords.append(m_graph.get_long_lat(current_node))
+
+                if len(current_node) == 3 and len(next_node) == 3:
+                    folium.Marker([marker_coords[i][1], marker_coords[i][0]], icon=folium.Icon(color="darkred",icon=iconMaker(len(current_node)), prefix='fa'), popup=i, tooltip=result_path[1][i]).add_to(m)
+                    edge_coords.append(m_graph.get_long_lat(next_node))
+                    folium.PolyLine(edge_coords, color="purple").add_to(m)
+                    edge_coords = []
+                else:
+                    folium.Marker([marker_coords[i][1], marker_coords[i][0]], icon=folium.Icon(color="darkred",icon=iconMaker(len(current_node)), prefix='fa'), popup=i, tooltip=result_path[1][i]).add_to(m)
+                    edge_coords.append(m_graph.get_long_lat(next_node))
+                    folium.PolyLine(edge_coords, color="grey").add_to(m)
+                    edge_coords = []                    
         elif (MOT == "B"):
-            singleTransportPlot(paths, "darkred", "green", "bus")
+            marker_coords = []
+            edge_coords = []
+            changes_Indicator = 0
+
+            for i in range(0, len(paths[1])):
+                marker_coords.append(m_graph.get_lat_long(paths[1][i]))
+
+                current_node = paths[1][i]
+                if i+1 < len(paths[1]):
+                    next_node = paths[1][i+1]
+                
+                edge_coords.append(m_graph.get_long_lat(current_node))
+
+                if len(current_node) == 5 and len(next_node) == 5:
+                    folium.Marker([marker_coords[i][1], marker_coords[i][0]], icon=folium.Icon(color="darkred",icon=iconMaker(len(current_node)), prefix='fa'), popup=i, tooltip=result_path[1][i]).add_to(m)
+                    edge_coords.append(m_graph.get_long_lat(next_node))
+                    folium.PolyLine(edge_coords, color="green").add_to(m)
+                    edge_coords = []
+                else:
+                    folium.Marker([marker_coords[i][1], marker_coords[i][0]], icon=folium.Icon(color="darkred",icon=iconMaker(len(current_node)), prefix='fa'), popup=i, tooltip=result_path[1][i]).add_to(m)
+                    edge_coords.append(m_graph.get_long_lat(next_node))
+                    folium.PolyLine(edge_coords, color="grey").add_to(m)
+                    edge_coords = []   
         elif (MOT == "W"):
             singleTransportPlot(paths, "darkred", "grey", "male") 
         elif (MOT == "M"):
@@ -162,19 +206,19 @@ if __name__ == "__main__":
                 edge_coords.append(m_graph.get_long_lat(current_node))
 
                 if len(current_node) == len(next_node):
-                    folium.Marker([marker_coords[i][1], marker_coords[i][0]], icon=folium.Icon(color="darkred",icon=iconMaker(len(current_node)), prefix='fa'), popup=i, tooltip=result_path[i]).add_to(m)
+                    folium.Marker([marker_coords[i][1], marker_coords[i][0]], icon=folium.Icon(color="darkred",icon=iconMaker(len(current_node)), prefix='fa'), popup=i, tooltip=result_path[1][i]).add_to(m)
                     edge_coords.append(m_graph.get_long_lat(next_node))
                     folium.PolyLine(edge_coords, color=setColor(len(current_node))).add_to(m)
                     edge_coords = []
                 elif len(current_node) != len(next_node):
                     if changes_Indicator == 1:
-                        folium.Marker([marker_coords[i][1], marker_coords[i][0]], icon=folium.Icon(color="darkred",icon=iconMaker(len(current_node)), prefix='fa'), popup=i, tooltip=result_path[i]).add_to(m)
+                        folium.Marker([marker_coords[i][1], marker_coords[i][0]], icon=folium.Icon(color="darkred",icon=iconMaker(len(current_node)), prefix='fa'), popup=i, tooltip=result_path[1][i]).add_to(m)
                         edge_coords.append(m_graph.get_long_lat(next_node))
                         folium.PolyLine(edge_coords, color=setColor(len(next_node))).add_to(m)
                         edge_coords = []
                         changes_Indicator -= 1
                     else:
-                        folium.Marker([marker_coords[i][1], marker_coords[i][0]], icon=folium.Icon(color="darkred",icon=iconMaker(len(current_node)), prefix='fa'), popup=i, tooltip=result_path[i]).add_to(m)
+                        folium.Marker([marker_coords[i][1], marker_coords[i][0]], icon=folium.Icon(color="darkred",icon=iconMaker(len(current_node)), prefix='fa'), popup=i, tooltip=result_path[1][i]).add_to(m)
                         edge_coords.append(m_graph.get_long_lat(next_node))
                         folium.PolyLine(edge_coords, color=setColor(len(current_node))).add_to(m)
                         edge_coords = []
