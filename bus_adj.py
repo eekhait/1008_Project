@@ -14,10 +14,10 @@ punggol = pd.read_csv('Complete_Punggol_Graph.csv',sep=',',header=None)
 #Complete_graph = pd.read_csv('Complete_Punggol_Graph.csv' , sep=',', header=None,)
 bus_speed = 50000/60
 bus_waiting_time = 5
-start = "65009"
-end = "65221"
-new_start = "821260"
-new_end = "821266"
+start = "65141"
+end = "65339"
+new_start = "PW7"
+new_end = "821270"
 #busData.set_index("3")
 #print (busData[:])
 #print (busData[[2,3]])
@@ -26,18 +26,19 @@ new_end = "821266"
 #busStop2 = (busData[3] == "65009")
 #print(busStop2)
 def busStopCode1(data):
-    start = punggol[0] == data;
+    start = (punggol[0] == data);
     return start
 
-def connected(data):
+print (punggol[busStopCode1(new_start)])
 
+def connected(data):
     connected1 = punggol[busStopCode1(data)]
     hg = []
     test = pd.DataFrame(connected1[6].str.split(',').tolist())
     test1 = pd.DataFrame((connected1[7].str.split(',').tolist()))
     ht =[]
     if len(data) == 5:
-        ht.append(data)
+        ht.append(int(data))
    # print(int(test1[0].values))
     niii = max(test1.columns.values)
     for i in test.iterrows():
@@ -46,13 +47,13 @@ def connected(data):
                 #for connected nodes and distance
                 hg.append(((int(test[k].values)),(int(test1[k].values))))
                 #just for connected nodes
-                ht.append(int(test[k].values))
+                ht.append(int((test[k].values)))
     #connected = connected1[7] <= 200;
     return ht
 
-print (connected(start))
-print (connected(end))
-
+#print ("New Conneccted ", connected(new_start))
+#print ("New end ", connected(new_end))
+#print(m_graph.take_walk(start,end))
 # test test find route
 '''
 connected1 = punggol[busStopCode1(new_start)]
@@ -86,6 +87,8 @@ def busStopCode_startfinder(data):
             new_array.append(test_test1)
     return new_array
 
+
+
 def busStopCode_endfinder(data):
     length = len(data)
     new_array =[]
@@ -97,20 +100,12 @@ def busStopCode_endfinder(data):
             new_array.append(test_test1)
     return new_array
 
-#print (busStopCode_startfinder(connected(new_start)))
-#print (busStopCode_endfinder(connected(new_end)))
-
-#print (lol)
-#print ()
-#print (busNo("3"))
-#print (busData2[bus])
-#print(busData[(busStopCode(start))])
-#print (busData2.loc[1:2,1])
-
 def take_bus(start_node, end_node,data):
     bus_route = (busNoInserter(data)) & (busStopCode(start_node) |  endStopCode(end_node))
     asd = [start_node]
     bus_distance = 0
+    lol = np.int64(0)
+    lol1 = np.int64(0)
     #bus_route = (bus_route[0]) >= 1 & (bus_route[0] <=3)
     route = busData2[bus_route]
     if route.empty == True:
@@ -122,22 +117,31 @@ def take_bus(start_node, end_node,data):
         except IndexError:
             lol1 = lol
         for i in range (lol,lol1+1):
-            bus_distance += int(busData2.at[i,3])
-            asd.append(busData2.at[i,2])
+            if busData2.at[lol,6] != busData2.at[lol1,6]:
+                pass
+            else:
+                bus_distance += int(busData2.at[i,3])
+                asd.append(busData2.at[i,2])
     # This is for distance measuring
     #print (math.ceil(bus_distance/bus_speed + bus_waiting_time + (lol1-lol)))
+
+    if len(asd) < 1:
+        asd = []
+        return None
+
+
     return (data,asd, math.ceil(bus_distance/bus_speed + bus_waiting_time + (lol1-lol)))
     #for i in busData:
         #print(col[2])
    # for key, value in busData.iteritems():
         #print(key,value)
 
-#print(take_bus(start, end,busNumber))
+#print(take_bus("65141", "65009","43"))
 
 def route_finder(new_start, new_end):
     starting = busStopCode_startfinder(connected(new_start))
-    starting_busNo = starting[0][0]
-    ending = busStopCode_endfinder(connected(new_end))
+    #starting_busNo = starting[0][0]
+    ending = busStopCode_startfinder(connected(new_end))
     str1 = ' '
     str2 = ' '
     k = []
@@ -153,9 +157,12 @@ def route_finder(new_start, new_end):
                 b, indices = np.unique((ending[i][2].values),return_counts= True)
                 str1 = str1.join(a)
                 str2 = str2.join(b)
-                p = list((take_bus(str1,str2,l)))
-                n.append((take_bus(str1,str2,l))[2])
-                k.append(p)
+                if take_bus(str1,str2,l) is None:
+                    pass
+                else:
+                    p = list((take_bus(str1,str2,l)))
+                    n.append((take_bus(str1,str2,l))[2])
+                    k.append(p)
 
                 #k.append(take_bus(str1,str2,l)[2])
                 #print((take_bus(str1,str2,l)))
@@ -171,9 +178,32 @@ def route_finder(new_start, new_end):
     #pop.loc[0], pop.loc[2] = pop.loc[2], pop.loc[0]
     first_route = []
     lol = pd.DataFrame(pop[1].tolist())
+
+    starting_walk = m_graph.take_walk(new_start,lol[0].values[0])
+    print(starting_walk[0])
+    if ((starting_walk[0]) == 0):
+        pass
+    else:
+        first_route.append(starting_walk[0])
     for i in range (0,len(lol)):
         for l in lol:
             first_route.append((lol[l][i]))
+    ending_walk = m_graph.take_walk(lol[1].values[0], new_end)
+    if len(ending_walk) <=3:
+        first_route.append(ending_walk[1])
+    else:
+        print(ending_walk)
+        new = np.array(ending_walk[1])
+        #for m in ending_walk:
+        #listTostr = ','.join(map(str,ending_walk[1]))
+        ending_list = (str(ending_walk[1])).strip('[]')
+        counter = 1
+        print(new)
+        for i in range (1,len(new)):
+            first_route.append(new[counter])
+            counter = counter + 1
+         #   print ("M is ", m)
+    #print (first_route)
     p = []
     #if len(new_start) == 6:
      #   if len(new_end) == 6:
@@ -183,13 +213,14 @@ def route_finder(new_start, new_end):
     for i, l in pop.iterrows():
         p = [l[0], l[1], l[2]]
 
-    print (p)
     k = []
     # all route here
     for i ,l in optimised_route.iterrows():
         k.append((l[0],l[1],l[2]))
     #print (k)
 
-    return p
+    return first_route
 
-route_finder(new_start,new_end)
+
+print(m_graph.take_walk("65431", end))
+route_finder(start,end)

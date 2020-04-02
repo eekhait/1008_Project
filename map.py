@@ -87,6 +87,7 @@ if __name__ == "__main__":
                 elif mode == 'B':
                     # Call Bus algorithm here
                     result_path = bus_graph.route_finder(start,end)
+                    location = result_path
                 elif mode == 'W':
                     # Call Walk algorithm here
                     result_path = m_graph.take_walk(location[0], location[1])

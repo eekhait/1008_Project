@@ -27,12 +27,12 @@ def get_distance_to_from(point_a, point_b):
 
 def get_long_lat(target):
     index = get_node_index(target)
-    return [round(float(mainGraph.at[index, 3]), 3), round(float(mainGraph.at[index, 4]), 3)]
+    return [round(float(mainGraph.at[index, 3]), 4), round(float(mainGraph.at[index, 4]), 4)]
 
 
 def get_lat_long(target):
     index = get_node_index(target)
-    return [round(float(mainGraph.at[index, 4]), 3), round(float(mainGraph.at[index, 3]), 3)]
+    return [round(float(mainGraph.at[index, 4]), 4), round(float(mainGraph.at[index, 3]), 4)]
 
 
 def get_node_index(target):
