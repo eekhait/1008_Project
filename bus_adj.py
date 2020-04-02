@@ -11,13 +11,14 @@ busData = pd.read_csv('Punggol_Bus_Routing.csv', sep=',', header=None)
 # Columns: 0-Code, ....... pending
 busData2 = pd.read_csv('Punggol_Bus_Routing_Type2.csv', sep=',',header=None)
 punggol = pd.read_csv('Complete_Punggol_Graph.csv',sep=',',header=None)
+punggol1 = pd.read_csv('Punggol_complete_graph2.csv',sep=',',header=None)
 #Complete_graph = pd.read_csv('Complete_Punggol_Graph.csv' , sep=',', header=None,)
 bus_speed = 50000/60
 bus_waiting_time = 5
 start = "65141"
 end = "65339"
-new_start = "PW7"
-new_end = "821270"
+new_start = "828858"
+new_end = "821266"
 #busData.set_index("3")
 #print (busData[:])
 #print (busData[[2,3]])
@@ -26,21 +27,35 @@ new_end = "821270"
 #busStop2 = (busData[3] == "65009")
 #print(busStop2)
 def busStopCode1(data):
-    start = (punggol[0] == data);
+    start = (punggol[0] == data)
     return start
 
-print (punggol[busStopCode1(new_start)])
+def busStopCode2(data):
+    start = punggol1[0] == data
+    return start
+
 
 def connected(data):
     connected1 = punggol[busStopCode1(data)]
+    if connected1.empty is True:
+        connected1 = punggol1[busStopCode2(data)]
     hg = []
     test = pd.DataFrame(connected1[6].str.split(',').tolist())
     test1 = pd.DataFrame((connected1[7].str.split(',').tolist()))
+    if test.empty == True:
+        print("no such route For Buses")
+        sys.exit()
+    if test1.empty == True:
+        print ("no such route For buses")
+        sys.exit()
     ht =[]
     if len(data) == 5:
         ht.append(int(data))
    # print(int(test1[0].values))
-    niii = max(test1.columns.values)
+    try:
+        niii = max(test1.columns.values)
+    except ValueError:
+        niii = (test1.columns.values)
     for i in test.iterrows():
         for k in range (0, niii):
             if int(test1[k].values) <=200:
@@ -137,11 +152,13 @@ def take_bus(start_node, end_node,data):
         #print(key,value)
 
 #print(take_bus("65141", "65009","43"))
+print(busStopCode_startfinder(connected(new_start)))
 
 def route_finder(new_start, new_end):
     starting = busStopCode_startfinder(connected(new_start))
-    #starting_busNo = starting[0][0]
+    print(starting)
     ending = busStopCode_startfinder(connected(new_end))
+    print(ending)
     str1 = ' '
     str2 = ' '
     k = []
@@ -164,12 +181,16 @@ def route_finder(new_start, new_end):
                     n.append((take_bus(str1,str2,l))[2])
                     k.append(p)
 
+
                 #k.append(take_bus(str1,str2,l)[2])
                 #print((take_bus(str1,str2,l)))
             except IndexError:
                 "Do Nothing"
-
     df = pd.DataFrame(k)
+    print(df)
+    if df.empty == True:
+        print("no such route for buses")
+        sys.exit()
     route = df[2] == min(n)
     optimised_route = df[route]
     name = pd.DataFrame(optimised_route[1].tolist())
@@ -180,7 +201,7 @@ def route_finder(new_start, new_end):
     lol = pd.DataFrame(pop[1].tolist())
 
     starting_walk = m_graph.take_walk(new_start,lol[0].values[0])
-    print(starting_walk[0])
+    print(starting_walk)
     if ((starting_walk[0]) == 0):
         pass
     else:
@@ -189,27 +210,16 @@ def route_finder(new_start, new_end):
         for l in lol:
             first_route.append((lol[l][i]))
     ending_walk = m_graph.take_walk(lol[1].values[0], new_end)
-    if len(ending_walk) <=3:
+    if len(ending_walk) <2:
         first_route.append(ending_walk[1])
     else:
-        print(ending_walk)
         new = np.array(ending_walk[1])
         #for m in ending_walk:
-        #listTostr = ','.join(map(str,ending_walk[1]))
-        ending_list = (str(ending_walk[1])).strip('[]')
+        #ending_list = (str(ending_walk[1])).strip('[]')
         counter = 1
-        print(new)
         for i in range (1,len(new)):
             first_route.append(new[counter])
             counter = counter + 1
-         #   print ("M is ", m)
-    #print (first_route)
-    p = []
-    #if len(new_start) == 6:
-     #   if len(new_end) == 6:
-      #      for i, l in pop.iterrows():
-       #         p = [l[0], new_start,l[1],new_end, l[2]]
-    #else:
     for i, l in pop.iterrows():
         p = [l[0], l[1], l[2]]
 
@@ -223,4 +233,4 @@ def route_finder(new_start, new_end):
 
 
 print(m_graph.take_walk("65431", end))
-route_finder(start,end)
+route_finder(new_start,new_end)
