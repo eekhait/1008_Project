@@ -86,6 +86,7 @@ def busStopCode(data):
 def endStopCode(data):
     endStop = busData2[2] == data
     return endStop
+
 #bus = busStopCode(start) | endStopCode(end)
 def busNoInserter(data):
     busNo = busData2[0] == data
@@ -102,8 +103,6 @@ def busStopCode_startfinder(data):
             new_array.append(test_test1)
     return new_array
 
-
-
 def busStopCode_endfinder(data):
     length = len(data)
     new_array =[]
@@ -115,32 +114,40 @@ def busStopCode_endfinder(data):
             new_array.append(test_test1)
     return new_array
 
+
+#print(busData2[endStopCode("65401")])
+
 def take_bus(start_node, end_node,data):
-    bus_route = (busNoInserter(data)) & (busStopCode(start_node) |  endStopCode(end_node))
-    asd = [start_node]
+    bus_route = (busNoInserter(data)) & ((busStopCode(start_node) |  endStopCode(end_node)))
+    asd =[]
+    asd.append(start_node)
     bus_distance = 0
     lol = np.int64(0)
     lol1 = np.int64(0)
     #bus_route = (bus_route[0]) >= 1 & (bus_route[0] <=3)
     route = busData2[bus_route]
-    if route.empty == True:
+    if len(route) < 2:
         pass
     else:
-        lol = route.index.values[0]
-        try:
-            lol1= route.index.values[1]
-        except IndexError:
-            lol1 = lol
-        for i in range (lol,lol1+1):
-            if busData2.at[lol,6] != busData2.at[lol1,6]:
-                pass
-            else:
-                bus_distance += int(busData2.at[i,3])
-                asd.append(busData2.at[i,2])
-    # This is for distance measuring
-    #print (math.ceil(bus_distance/bus_speed + bus_waiting_time + (lol1-lol)))
+        if route.empty == True:
+            pass
+        else:
+            lol = route.index.values[0]
+            try:
+                lol1= route.index.values[1]
+            except IndexError:
+                lol1 = lol
+            for i in range (lol,lol1+1):
+                if busData2.at[lol,6] != busData2.at[lol1,6]:
+                    pass
+                else:
+                    bus_distance += int(busData2.at[i,3])
+                    asd.append(busData2.at[i,2])
+                    #print(asd)
+        # This is for distance measuring
+        #print (math.ceil(bus_distance/bus_speed + bus_waiting_time + (lol1-lol)))
 
-    if len(asd) < 1:
+    if len(asd) < 2:
         asd = []
         return None
 
@@ -152,13 +159,11 @@ def take_bus(start_node, end_node,data):
         #print(key,value)
 
 #print(take_bus("65141", "65009","43"))
-print(busStopCode_startfinder(connected(new_start)))
+#print(busStopCode_startfinder(connected(new_start)))
 
 def route_finder(new_start, new_end):
     starting = busStopCode_startfinder(connected(new_start))
-    print(starting)
-    ending = busStopCode_startfinder(connected(new_end))
-    print(ending)
+    ending = busStopCode_endfinder(connected(new_end))
     str1 = ' '
     str2 = ' '
     k = []
@@ -166,7 +171,7 @@ def route_finder(new_start, new_end):
     for i in range (0,len(starting)):
         bus_to_take = starting[i][0].values
         asd = (starting[i][1].values)
-        bus_to , indices = np.unique(asd,return_counts=True)
+        #bus_to_take , indices = np.unique(asd,return_counts=True)
         for l in bus_to_take:
         #buses.append(bus_to_take[5])
             try:
@@ -177,7 +182,8 @@ def route_finder(new_start, new_end):
                 if take_bus(str1,str2,l) is None:
                     pass
                 else:
-                    p = list((take_bus(str1,str2,l)))
+                    p = list(take_bus(str1,str2,l))
+                    print (p)
                     n.append((take_bus(str1,str2,l))[2])
                     k.append(p)
 
@@ -187,7 +193,7 @@ def route_finder(new_start, new_end):
             except IndexError:
                 "Do Nothing"
     df = pd.DataFrame(k)
-    print(df)
+    #print(df)
     if df.empty == True:
         print("no such route for buses")
         sys.exit()
@@ -201,7 +207,7 @@ def route_finder(new_start, new_end):
     lol = pd.DataFrame(pop[1].tolist())
 
     starting_walk = m_graph.take_walk(new_start,lol[0].values[0])
-    print(starting_walk)
+
     if ((starting_walk[0]) == 0):
         pass
     else:
@@ -209,6 +215,7 @@ def route_finder(new_start, new_end):
     for i in range (0,len(lol)):
         for l in lol:
             first_route.append((lol[l][i]))
+    #print(lol)
     ending_walk = m_graph.take_walk(lol[1].values[0], new_end)
     if len(ending_walk) <2:
         first_route.append(ending_walk[1])
@@ -222,7 +229,7 @@ def route_finder(new_start, new_end):
             counter = counter + 1
     for i, l in pop.iterrows():
         p = [l[0], l[1], l[2]]
-
+    print(ending_walk)
     k = []
     # all route here
     for i ,l in optimised_route.iterrows():
@@ -232,5 +239,5 @@ def route_finder(new_start, new_end):
     return first_route
 
 
-print(m_graph.take_walk("65431", end))
-route_finder(new_start,new_end)
+#print(m_graph.take_walk("65431", end))
+
