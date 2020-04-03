@@ -53,7 +53,7 @@ def connected(data):
         niii = (test1.columns.values)
     for i in test.iterrows():
         for k in range (0, niii):
-            if int(test1[k].values) <= 360:
+            if int(test1[k].values) <=200:
                 #for connected nodes and distance
                 hg.append(((int(test[k].values)),(int(test1[k].values))))
                 #just for connected nodes

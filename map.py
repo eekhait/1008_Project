@@ -109,9 +109,11 @@ if __name__ == "__main__":
         # Prompt user for start and destination point
         start = input("\nWhere are you coming from?\n")
         end = input("Where is your destination?\n")
+        check(start)
+        check(end)
 
         # Calls function to check if input is valid by comparing with CSV
-        if check(start) == None or check(end) == None:
+        if len(location) != 2:
             print("Location not valid, please try again\n")
             continue
         else:
