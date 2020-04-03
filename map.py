@@ -14,7 +14,7 @@ import csv
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     # Create map object, set default location, map theme & zoom
-    m = folium.Map(location=[1.4046357, 103.9090000], tiles="Stamen Terrain", zoom_start=14.5)
+    m = folium.Map(location=[1.4046357, 103.9090000], zoom_start=14.5, prefer_canvas=True)
     # Global tooltip, hover info
     tooltip = 'Click For More Info'
 
@@ -44,9 +44,60 @@ if __name__ == "__main__":
             else:
                 print('Not a valid input, please try again')
 
+    def show_walks():
+        # Used to create a file to show graph of connectivity
+        # This one is just nodes that are of walkable distance
+        marked = []
+        for i in range(1, len(m_graph.mainGraph[0])):
+            for j in list(m_graph.mainGraph.at[i, 6].split(", ")):
+                # print(m_graph.mainGraph[0][i], j)
+                if [m_graph.mainGraph[0][i], j] not in marked and [j, m_graph.mainGraph[0][i]] not in marked:
+                    coords_to_add = [m_graph.get_long_lat(m_graph.mainGraph[0][i]), m_graph.get_long_lat(j)]
+                    # print(coords_to_add)
+                    marked.append(coords_to_add)
+                    folium.PolyLine(coords_to_add, color="grey", opacity=0.5, weight=0.5).add_to(m)
+        m.save("walks.html")
+
+    def show_lrts():
+        # Used to create a file to show graph of connectivity
+        # This one is just the LRTs, and what blocks are 'connected' to them
+        marked = []
+        # Buildings and their closest LRTs
+        for i in range(1, len(m_graph.mainGraph[0])-14):
+            closest_lrt = m_graph.get_nearest_lrt(m_graph.mainGraph[0][i])
+            if [m_graph.mainGraph[0][i], closest_lrt] not in marked and [closest_lrt, m_graph.mainGraph[0][i]] not in marked:
+                coords_to_add = [m_graph.get_long_lat(m_graph.mainGraph[0][i]), m_graph.get_long_lat(closest_lrt)]
+                marked.append(coords_to_add)
+                folium.PolyLine(coords_to_add, color="grey", opacity=1, weight=1).add_to(m)
+        # Markers for LRTs
+        marked = []
+        marked2 = []
+        with open('Punggol_LRT_Routing.csv', 'rt') as lrt:
+            reader = csv.reader(lrt, delimiter=',')
+            next(reader)
+            for row in reader:
+                for i in row[2].split(", "):    # connected nodes
+                    if [row, i] not in marked and [i, row] not in marked:
+                        # print(row[0], i)
+                        coords_to_add = [m_graph.get_long_lat(row[0]), m_graph.get_long_lat(i)]
+                        marked.append(coords_to_add)
+                        folium.PolyLine(coords_to_add, color="purple").add_to(m)
+                if coords_to_add not in marked2:
+                    folium.Marker(coords_to_add[0],
+                              icon=folium.Icon(color="purple", icon="train", prefix='fa'),
+                              popup=i, tooltip=row[0]).add_to(m)
+                    marked2.append(coords_to_add[0])
+        # Edges between LRTs
+        marked = []
+        m.save("lrts.html")
+
+    def show_buses():
+        pass
+
+
+    show_buses()
     print("\nWelcome to Punggol Pathfinder")
-    print(
-        "Valid inputs are: \033[1m Postal codes, bus stop numbers, train station names, train station codes. \033[0m")
+    print("Valid inputs are: \033[1m Postal codes, bus stop numbers, train station names, train station codes. \033[0m")
 
     while True:
         name = []
@@ -128,7 +179,7 @@ if __name__ == "__main__":
         elif (length == 5):
             return "bus"
         elif length == 6:
-            return "blind"
+            return "male"
 
     # Set color based on transportation type
     def setColor(length):
@@ -138,13 +189,13 @@ if __name__ == "__main__":
             return "green"
         elif length == 6:
             return "grey"    
-    
+
+
     # Set route based on different transport
     def routePlotting(MOT, paths):
         if (MOT == "L"):
             marker_coords = []
             edge_coords = []
-            changes_Indicator = 0
 
             for i in range(0, len(paths[1])):
                 marker_coords.append(m_graph.get_lat_long(paths[1][i]))
@@ -168,7 +219,6 @@ if __name__ == "__main__":
         elif (MOT == "B"):
             marker_coords = []
             edge_coords = []
-            changes_Indicator = 0
 
             for i in range(0, len(paths[1])):
                 marker_coords.append(m_graph.get_lat_long(paths[1][i]))
@@ -226,7 +276,7 @@ if __name__ == "__main__":
 
     # Call Set routes and pass in mode of transport and routes
     # Sample Input: [Coming From: PE1], [Coming From: ]
-    routePlotting(mode, location)
+    routePlotting(mode, result_path)
 
     # Initialization of the map
     data = io.BytesIO()             # creates a temporary 'container' for html code
