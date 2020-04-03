@@ -204,7 +204,7 @@ def route_finder(new_start, new_end):
     if len(ending_walk) <= 2:
 
         end_route = ending_walk[1]
-        print(end_route)
+        # print(end_route)
         first_route.append(end_route[0])
         end_route.pop(0)
         first_route.append(end_route[0])
@@ -226,13 +226,13 @@ def route_finder(new_start, new_end):
     route.append(test1[0][0]) # time taken is fine
     route[0] += starting_walk[0]
     route[0] += ending_walk[0]
-    print("first_route:", first_route)
+    # print("first_route:", first_route)
     route.append(first_route)
     route.append(lemon) # lemon is fine
-    print("")
+    # print("")
     route.append(test1[2][0]) # bus number is fine
     return (route)
 
-print("BUS ROUTE: ", route_finder("828858","65009"))
+# print("BUS ROUTE: ", route_finder("828858","65009"))
 
 
