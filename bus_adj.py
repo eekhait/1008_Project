@@ -223,14 +223,15 @@ def route_finder(new_start, new_end):
         k.append((l[0], l[1], l[2]))
     route = []
     test1 = pop
-    route.append(test1[0][0]) # time taken is fine
+    m = test1.index.values[0]
+    route.append(test1[0][m]) # time taken is fine
     route[0] += starting_walk[0]
     route[0] += ending_walk[0]
     # print("first_route:", first_route)
     route.append(first_route)
     route.append(lemon) # lemon is fine
     # print("")
-    route.append(test1[2][0]) # bus number is fine
+    route.append(test1[2][m]) # bus number is fine
     return (route)
 
 # print("BUS ROUTE: ", route_finder("828858","65009"))
