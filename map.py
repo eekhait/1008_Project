@@ -4,6 +4,7 @@ import sys
 import main_graph as m_graph
 import bus_adj as bus_graph
 import lrt_adj as lrt_graph
+import pandas as pd
 from PyQt5 import QtWidgets, QtWebEngineWidgets
 import csv
 
@@ -92,10 +93,25 @@ if __name__ == "__main__":
         m.save("lrts.html")
 
     def show_buses():
-        pass
+        b_graph = pd.read_csv('Punggol_Bus_Routing_Type2.csv', sep=',')
+        b_graph["ServiceNo"] = b_graph["ServiceNo"].apply(str)  # converts column to be string-only (rather than int+str)
+        b_graph["NextStop"] = b_graph["NextStop"].apply(str)  # converts column to be string-only (rather than int+str)
+        marked = []
+        for i in range(0,len(b_graph["ServiceNo"])):
+            longlats = [m_graph.get_long_lat(b_graph.at[i, "BusStopCode"]), m_graph.get_long_lat(b_graph.at[i, "NextStop"])]
+            # add marker (latlong)
+            if b_graph.at[i, "BusStopCode"] not in marked:
+                folium.Marker(m_graph.get_lat_long(b_graph.at[i, "BusStopCode"]),
+                          icon=folium.Icon(color="green", icon="bus", prefix='fa', weight=0.1)).add_to(m)
+                marked.append(i)
+            # add edge (longlat)
+            folium.PolyLine(longlats, color="green").add_to(m)
+        m.save("buses.html")
 
 
-    show_buses()
+    # show_walks()
+    # show_lrts()
+    # show_buses()
     print("\nWelcome to Punggol Pathfinder")
     print("Valid inputs are: \033[1m Postal codes, bus stop numbers, train station names, train station codes. \033[0m")
 
@@ -134,6 +150,7 @@ if __name__ == "__main__":
                 print("Let\'s try again")
             elif answer == 'Y':
                 mode = transportation("Select mode of transport: LRT (L), Bus (B), Walk (W), or Mixed (M)\n")
+                print("\nRoute", "from","to","via...")
                 if mode == 'L':
                     # Call Lrt algorithm here
                     result_path = lrt_graph.take_lrt(location[0], location[1])
@@ -143,6 +160,7 @@ if __name__ == "__main__":
                 elif mode == 'W':
                     # Call Walk algorithm here
                     result_path = m_graph.take_walk(location[0], location[1])
+                    print(result_path)
                 elif mode == 'M':
                     # Call Mixed algorithm here
                     print("Option not implemented. Please try again with a different options")
@@ -152,12 +170,6 @@ if __name__ == "__main__":
     # print(location)
     # print(mode)
 
-    # lastly... (current path is placeholder)
-    caseL = [10, ['65151', 'PE1', 'PE2', 'PE3','820127']]
-    caseB = [15, ['820269', '820270', '820271', '65009', '65221', '820294'], [False, True, True, True, False]]
-
-    print("\nYou can reach XXX from XXX via...")
-    print(result_path)    # loop through result_path array and print in one line
 
     # (khai)
     # THIS PART IS WHERE THE MAP GETS POPULATED WITH NODES AND EDGES ---------------------------------------------

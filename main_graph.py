@@ -38,6 +38,7 @@ def get_lat_long(target):
 def get_node_index(target):
     # Start location codes are from index 1 to 1190
     # print(type(target),target)
+    target=str(target)
     low = startIndex
     high = endIndex
     mid = (startIndex+endIndex)//2
