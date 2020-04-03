@@ -198,8 +198,13 @@ def route_finder(new_start, new_end):
 
 
     if len(ending_walk) <= 2:
-        first_route.append(ending_walk[1])
-        lemon.append(False)
+        new = np.array(ending_walk[1])
+        counter = 1
+        for i in range(1, len(new)):
+            first_route.append(new[counter])
+            lemon.append(False)
+            counter = counter + 1
+            lemon.append(False)
     else:
         new = np.array(ending_walk[1])
         counter = 1
@@ -212,15 +217,17 @@ def route_finder(new_start, new_end):
     # all route here
     for i ,l in optimised_route.iterrows():
         k.append((l[0],l[1],l[2]))
+
     route = []
     test1 = pop
-    route.append(test1[0][0])
+    m = pop.index.values[0]
+    route.append(test1[0][m])
     route.append(first_route)
     route.append(lemon)
-    route.append(test1[2][0])
+    route.append(test1[2][m])
     print(route)
     return (route)
 
-route_finder("828858","65009")
+route_finder("820101","65009")
 
 
