@@ -1,14 +1,17 @@
 import pandas as pd
 import csv
 import math
+
 import main_graph as m_graph
 
 lrtData = pd.read_csv('Punggol_LRT_Routing.csv', sep=',', header=None)
+
 
 def round_up(n, decimals=0):
     # this is to round up even is 0.1 above
     multiplier = 10 ** decimals
     return math.ceil(n * multiplier) / multiplier
+
 
 def bfs_route(graph, start, end):
     # maintain a queue of paths
@@ -40,6 +43,7 @@ def cal_distance(adj_list_val, result):
                 distance += int(adj_list_val[result[i]][y][result[
                     i + 1]])  # e.g. adj_list_val['PE1'][0][['PE2'] will return the distance weightage
     return distance
+
 
 def take_lrt(start_node, end_node):
     start_node = str(start_node)  # Store the start name
@@ -97,16 +101,43 @@ def take_lrt(start_node, end_node):
     # if start and end are connected
     if m_graph.is_adjacent_lrt(adj_list, start_node, end_node):
         result = [start_node, end_node]
+
+        # average SG MRT 45km/h == 12.5m/s
+        # Calculate the timing Second in minutes,
         distance = cal_distance(adj_list_val, result)
-        #average SG MRT 45km/h == 12.5m/s
-        #Calculate the timing Second in minutes,
         timing = round_up((distance / 12.5) / 60)
-        return [int(timing), [result]]
+
+        # Check if there any array
+        if len(walk_start_node) != 0:
+            del result[0]   # To delete the first array as is duplicated
+            result = walk_start_node[1] + result # Combine the Walking array with result (LRT)
+            timing = walk_start_node[0] + timing # Combine the Time required
+        if len(walk_end_node) != 0:
+            del result[-1] # To delete the last array as is duplicated
+            result = result + walk_end_node # Combine the result (LRT) with  Walking array
+
+        return [int(timing), result]
     else:
         result = (bfs_route(adj_list, start_node, end_node))
+
+        # average SG MRT 45km/h == 12.5m/s
+        # Calculate the timing Second in minutes,
         distance = cal_distance(adj_list_val, result)
-        #average timing stop at each mrt is 2min
-        mrt_stopping = 2 * int(len(result)-1)
-        #Calculate the timing Second in minutes,
+        timing = round_up((distance / 12.5) / 60)
+        # average timing stop at each mrt is 30second == 0.5
+        mrt_stopping = 0.5 * int(len(result) - 1)
+        # Calculate the timing Second in minutes,
         timing = round_up((distance / 12.5) / 60) + mrt_stopping
-        return [int(timing), [result]]
+        # Add another 5 min flat waiting for the train to arrvial
+        timing = timing + 5
+
+        if len(walk_start_node) != 0:
+            del result[0] # To delete the first array as is duplicated
+            result = walk_start_node[1] + result # Combine the Walking array with result (LRT)
+            timing = walk_start_node[0] + timing # Combine the Time required
+        if len(walk_end_node) != 0:
+            del result[-1]  # To delete the last array as is duplicated
+            result = result + walk_end_node # Combine the result (LRT) with  Walking array
+
+        # print([int(timing), result])
+        return [int(timing), result]
