@@ -136,10 +136,10 @@ if __name__ == "__main__":
                 mode = transportation("Select mode of transport: LRT (L), Bus (B), Walk (W), or Mixed (M)\n")
                 if mode == 'L':
                     # Call Lrt algorithm here
-                    result_path = lrt_graph.take_lrt(start, end)
+                    result_path = lrt_graph.take_lrt(location[0], location[1])
                 elif mode == 'B':
                     # Call Bus algorithm here
-                    result_path = bus_graph.route_finder(start,end)
+                    result_path = bus_graph.route_finder(location[0], location[1])
                 elif mode == 'W':
                     # Call Walk algorithm here
                     result_path = m_graph.take_walk(location[0], location[1])

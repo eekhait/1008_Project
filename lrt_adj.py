@@ -115,7 +115,6 @@ def take_lrt(start_node, end_node):
         if len(walk_end_node) != 0:
             del result[-1] # To delete the last array as is duplicated
             result = result + walk_end_node # Combine the result (LRT) with  Walking array
-
         return [int(timing), result]
     else:
         result = (bfs_route(adj_list, start_node, end_node))
@@ -128,16 +127,18 @@ def take_lrt(start_node, end_node):
         mrt_stopping = 0.5 * int(len(result) - 1)
         # Calculate the timing Second in minutes,
         timing = round_up((distance / 12.5) / 60) + mrt_stopping
-        # Add another 5 min flat waiting for the train to arrvial
+        # Add another 5 min flat waiting for the train to arrival
         timing = timing + 5
 
         if len(walk_start_node) != 0:
             del result[0] # To delete the first array as is duplicated
-            result = walk_start_node[1] + result # Combine the Walking array with result (LRT)
-            timing = walk_start_node[0] + timing # Combine the Time required
+            result = walk_start_node[1] + result  # Combine the Walking array with result (LRT)
+            timing = walk_start_node[0] + timing  # Combine the Time required
         if len(walk_end_node) != 0:
             del result[-1]  # To delete the last array as is duplicated
-            result = result + walk_end_node # Combine the result (LRT) with  Walking array
+            result = result + walk_end_node  # Combine the result (LRT) with  Walking array
 
         # print([int(timing), result])
         return [int(timing), result]
+
+# print("LRT ROUTE: ", take_lrt("828858","65009"))
