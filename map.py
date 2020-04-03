@@ -150,25 +150,43 @@ if __name__ == "__main__":
                 print("Let\'s try again")
             elif answer == 'Y':
                 mode = transportation("Select mode of transport: LRT (L), Bus (B), Walk (W), or Mixed (M)\n")
-                print("\nRoute", "from","to","via...")
                 if mode == 'L':
                     # Call Lrt algorithm here
                     result_path = lrt_graph.take_lrt(location[0], location[1])
+
+                    print("Time taken:", result_path[0], "mins")
+                    print("Take LRT from")
+                    for i in range(0, len(result_path[1])):
+                        print(result_path[1][i])
+                        if len(result_path[1]) - 1 != i:
+                            print("to")
                 elif mode == 'B':
                     # Call Bus algorithm here
                     result_path = bus_graph.route_finder(location[0], location[1])
+                    print("Time taken:", result_path[0], "mins")
+                    print("From")
+                    for i in range(0, len(result_path[1])):
+                        print(result_path[1][i])
+                        if (result_path[2][i]) == True:
+                            print("Take bus", result_path[3], "to ")
+                        else:
+                            if len(result_path[1]) - 1 != i:
+                                print("Walk to")
                 elif mode == 'W':
                     # Call Walk algorithm here
                     result_path = m_graph.take_walk(location[0], location[1])
-                    print(result_path)
+
+                    print("Time taken:", result_path[0], "mins")
+                    print("Walk from")
+                    for i in range(0, len(result_path[1])):
+                        print(result_path[1][i])
+                        if len(result_path[1]) - 1 != i:
+                            print("to")
                 elif mode == 'M':
                     # Call Mixed algorithm here
                     print("Option not implemented. Please try again with a different options")
                     sys.exit()
                 break
-
-    # print(location)
-    # print(mode)
 
 
     # (khai)
