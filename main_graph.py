@@ -37,6 +37,7 @@ def get_lat_long(target):
 
 def get_node_index(target):
     # Start location codes are from index 1 to 1190
+    # print(type(target),target)
     low = startIndex
     high = endIndex
     mid = (startIndex+endIndex)//2
@@ -217,7 +218,7 @@ def take_walk(start_node, end_node):
     end_node = str(end_node)
     # if start and end are connected
     if is_adjacent_walk(start_node, end_node):
-        return [start_node, end_node]
+        return [1, [start_node, end_node]]
     else:   # this part begins like the word ladder
         # initialization of queue and first stack (of just start node)
         # also initialization of visited nodes

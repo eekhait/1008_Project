@@ -151,10 +151,10 @@ if __name__ == "__main__":
 
     # lastly... (current path is placeholder)
     caseL = [10, ['65151', 'PE1', 'PE2', 'PE3','820127']]
-    caseB = [15, ['820269', '820270', '820271', '65009', '65221', '820294'], ['0', '0', '0', '3', '3', '0']]
+    caseB = [15, ['820269', '820270', '820271', '65009', '65221', '820294'], [False, True, True, True, False]]
 
     print("\nYou can reach XXX from XXX via...")
-    print("")   # loop through result_path array and print in one line
+    print(result_path)    # loop through result_path array and print in one line
 
     # (khai)
     # THIS PART IS WHERE THE MAP GETS POPULATED WITH NODES AND EDGES ---------------------------------------------
@@ -169,7 +169,9 @@ if __name__ == "__main__":
             edge_coords.append(m_graph.get_long_lat(i))
 
         for i in range(0, len(marker_coords)):
-            folium.Marker([marker_coords[i][1], marker_coords[i][0]], icon=folium.Icon(color=markerColor,icon=markerIcon, prefix='fa'), popup=i, tooltip=result_path[i]).add_to(m)
+            folium.Marker([marker_coords[i][1], marker_coords[i][0]],
+                          icon=folium.Icon(color=markerColor, icon=markerIcon, prefix='fa'), popup=i,
+                          tooltip=result_path[1][i]).add_to(m)
         folium.PolyLine(edge_coords, color=lineColor).add_to(m)
 
     # Set icon for different transportation types
@@ -240,7 +242,7 @@ if __name__ == "__main__":
                     folium.PolyLine(edge_coords, color="grey").add_to(m)
                     edge_coords = []   
         elif (MOT == "W"):
-            singleTransportPlot(paths, "darkred", "grey", "male") 
+            singleTransportPlot(paths[1], "darkred", "grey", "male")
         elif (MOT == "M"):
             marker_coords = []
             edge_coords = []
