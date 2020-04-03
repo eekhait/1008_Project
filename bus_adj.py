@@ -177,29 +177,36 @@ def route_finder(new_start, new_end):
     lol = pd.DataFrame(pop[1].tolist())
 
     starting_walk = m_graph.take_walk(new_start,lol[0].values[0])
-
+    lemon =[]
     if ((starting_walk[0]) == 0):
         pass
     else:
         first_route.append(starting_walk[0])
 
+    for i in range(1,len(starting_walk)):
+        lemon.append(False)
+
+
     for i in range (0,len(lol)):
         for l in lol:
             first_route.append((lol[l][i]))
+            lemon.append(True)
 
-    ending_walk = m_graph.take_walk(lol[1].values[0], new_end)
-    if len(ending_walk) <2:
+    length = max(lol)
+    Last_Point = lol[length].values[0]
+    ending_walk = m_graph.take_walk(Last_Point, new_end)
+
+
+    if len(ending_walk) <= 2:
         first_route.append(ending_walk[1])
+        lemon.append(False)
     else:
         new = np.array(ending_walk[1])
         counter = 1
         for i in range (1,len(new)):
             first_route.append(new[counter])
+            lemon.append(False)
             counter = counter + 1
-    '''       
-    for i, l in pop.iterrows():
-        p = [l[0], l[1], l[2]]
-    '''
 
     k = []
     # all route here
@@ -209,9 +216,10 @@ def route_finder(new_start, new_end):
     test1 = pop
     route.append(test1[0][0])
     route.append(first_route)
+    route.append(lemon)
     route.append(test1[2][0])
     print(route)
-    return (pop[0],first_route,pop[2])
+    return (route)
 
 route_finder("828858","65009")
 
