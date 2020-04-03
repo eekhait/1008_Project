@@ -95,13 +95,12 @@ def is_adjacent_bus(start_node, end_node):
 
 def is_adjacent_lrt(adj_list, start_node, end_node):
     # Check If Are Both LRT are directly connected!
-    for i in (adj_list):
+    for i in adj_list:
         if start_node == i:  # To check if able to found the KEY
             if end_node in adj_list[i]:  # To check if both Start_Node & End_Node are directly connected
                 return 1  # If Yes, return 1
             else:
                 return 0  # If No, return 0
-            break
 
 
 # ----------------------------------

@@ -101,11 +101,11 @@ if __name__ == "__main__":
             longlats = [m_graph.get_long_lat(b_graph.at[i, "BusStopCode"]), m_graph.get_long_lat(b_graph.at[i, "NextStop"])]
             # add marker (latlong)
             if b_graph.at[i, "BusStopCode"] not in marked:
-                folium.Marker(m_graph.get_lat_long(b_graph.at[i, "BusStopCode"]),
-                          icon=folium.Icon(color="green", icon="bus", prefix='fa', weight=0.1)).add_to(m)
+                folium.Marker(m_graph.get_long_lat(b_graph.at[i, "BusStopCode"]),
+                          icon=folium.Icon(color="green", icon="bus", prefix='fa'),popup="",tooltip="").add_to(m)
                 marked.append(i)
             # add edge (longlat)
-            folium.PolyLine(longlats, color="green").add_to(m)
+            folium.PolyLine(longlats, color="green", weight=2, opacity=0.75).add_to(m)
         m.save("buses.html")
 
 
