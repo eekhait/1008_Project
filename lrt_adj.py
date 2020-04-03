@@ -114,7 +114,7 @@ def take_lrt(start_node, end_node):
             timing = walk_start_node[0] + timing # Combine the Time required
         if len(walk_end_node) != 0:
             del result[-1] # To delete the last array as is duplicated
-            result = result + walk_end_node # Combine the result (LRT) with  Walking array
+            result = result + walk_end_node[1] # Combine the result (LRT) with  Walking array
         return [int(timing), result]
     else:
         result = (bfs_route(adj_list, start_node, end_node))
