@@ -145,7 +145,8 @@ if __name__ == "__main__":
                     result_path = m_graph.take_walk(location[0], location[1])
                 elif mode == 'M':
                     # Call Mixed algorithm here
-                    print("Mixed")
+                    print("Option not implemented. Please try again with a different options")
+                    sys.exit()
                 break
 
     # print(location)
