@@ -251,7 +251,7 @@ if __name__ == "__main__":
                     folium.PolyLine(edge_coords, color="grey").add_to(m)
                     edge_coords = []   
         elif (MOT == "W"):
-            singleTransportPlot(paths[1], "darkred", "grey", "male")
+            singleTransportPlot(paths[1], "gray", "grey", "building")
         elif (MOT == "M"):
             marker_coords = []
             edge_coords = []
