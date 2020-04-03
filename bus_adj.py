@@ -181,7 +181,8 @@ def route_finder(new_start, new_end):
     if ((starting_walk[0]) == 0):
         pass
     else:
-        first_route.append(starting_walk[0])
+        first_route=starting_walk[1]
+        first_route.pop(len(first_route)-1)
 
     for i in range(1,len(starting_walk)):
         lemon.append(False)
@@ -198,29 +199,34 @@ def route_finder(new_start, new_end):
 
 
     if len(ending_walk) <= 2:
-        first_route.append(ending_walk[1])
+        end_route = ending_walk[1]
+        end_route.pop(0)
+
         lemon.append(False)
     else:
         new = np.array(ending_walk[1])
         counter = 1
-        for i in range (1,len(new)):
+        for i in range(1, len(new)):
             first_route.append(new[counter])
             lemon.append(False)
             counter = counter + 1
 
     k = []
     # all route here
-    for i ,l in optimised_route.iterrows():
-        k.append((l[0],l[1],l[2]))
+    for i, l in optimised_route.iterrows():
+        k.append((l[0], l[1], l[2]))
     route = []
     test1 = pop
-    route.append(test1[0][0])
+    route.append(test1[0][0]) # time taken is fine
+    route[0] += starting_walk[0]
+    route[0] += ending_walk[0]
+    print("first_route:", first_route)
     route.append(first_route)
-    route.append(lemon)
-    route.append(test1[2][0])
-    print(route)
+    route.append(lemon) # lemon is fine
+    print("")
+    route.append(test1[2][0]) # bus number is fine
     return (route)
 
-route_finder("828858","65009")
+# print("BUS ROUTE: ", route_finder("828858","65009"))
 
 
