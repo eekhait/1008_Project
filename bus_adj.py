@@ -191,7 +191,10 @@ def route_finder(new_start, new_end):
     for i in range (0,len(lol)):
         for l in lol:
             first_route.append((lol[l][i]))
-            lemon.append(True)
+            if l == 0:
+                pass
+            else:
+                lemon.append(True)
 
     length = max(lol)
     Last_Point = lol[length].values[0]
@@ -199,9 +202,10 @@ def route_finder(new_start, new_end):
 
 
     if len(ending_walk) <= 2:
+
         end_route = ending_walk[1]
         end_route.pop(0)
-
+        first_route.append(end_route[0])
         lemon.append(False)
     else:
         new = np.array(ending_walk[1])
@@ -210,7 +214,7 @@ def route_finder(new_start, new_end):
             first_route.append(new[counter])
             lemon.append(False)
             counter = counter + 1
-
+    lemon.append(False)
     k = []
     # all route here
     for i, l in optimised_route.iterrows():
