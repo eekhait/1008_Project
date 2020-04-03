@@ -53,7 +53,7 @@ def connected(data):
         niii = (test1.columns.values)
     for i in test.iterrows():
         for k in range (0, niii):
-            if int(test1[k].values) <=200:
+            if int(test1[k].values) <= 360:
                 #for connected nodes and distance
                 hg.append(((int(test[k].values)),(int(test1[k].values))))
                 #just for connected nodes
@@ -165,7 +165,7 @@ def route_finder(new_start, new_end):
     df = pd.DataFrame(k)
 
     if df.empty == True:
-        print("no such route for buses")
+        print("No common bus nearby start and end points. Please restart with another option. ")
         sys.exit()
 
     route = df[2] == min(n)
