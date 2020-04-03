@@ -197,6 +197,7 @@ if __name__ == "__main__":
 
     # Set route based on different transport
     def routePlotting(MOT, paths):
+        changes_Indicator = 0
         if (MOT == "L"):
             marker_coords = []
             edge_coords = []
@@ -211,16 +212,10 @@ if __name__ == "__main__":
                 edge_coords.append(m_graph.get_long_lat(current_node))
 
                 if len(current_node) == 3 and len(next_node) == 3:
-                    if paths[2][i] == True:
-                        folium.Marker([marker_coords[i][1], marker_coords[i][0]], icon=folium.Icon(color=setColor(len(current_node)),icon=iconMaker(len(current_node)), prefix='fa'), popup=i, tooltip=result_path[1][i]).add_to(m)
-                        edge_coords.append(m_graph.get_long_lat(next_node))
-                        folium.PolyLine(edge_coords, color="purple").add_to(m)
-                        edge_coords = []
-                    else:
-                        folium.Marker([marker_coords[i][1], marker_coords[i][0]], icon=folium.Icon(color=setColor(len(current_node)),icon=iconMaker(len(current_node)), prefix='fa'), popup=i, tooltip=result_path[1][i]).add_to(m)
-                        edge_coords.append(m_graph.get_long_lat(next_node))
-                        folium.PolyLine(edge_coords, color="grey").add_to(m)
-                        edge_coords = []
+                    folium.Marker([marker_coords[i][1], marker_coords[i][0]], icon=folium.Icon(color=setColor(len(current_node)),icon=iconMaker(len(current_node)), prefix='fa'), popup=i, tooltip=result_path[1][i]).add_to(m)
+                    edge_coords.append(m_graph.get_long_lat(next_node))
+                    folium.PolyLine(edge_coords, color="purple").add_to(m)
+                    edge_coords = []
                 else:
                     folium.Marker([marker_coords[i][1], marker_coords[i][0]], icon=folium.Icon(color=setColor(len(current_node)),icon=iconMaker(len(current_node)), prefix='fa'), popup=i, tooltip=result_path[1][i]).add_to(m)
                     edge_coords.append(m_graph.get_long_lat(next_node))
